@@ -1,30 +1,58 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import Services from "../../Services/Services";
+import { toast } from "react-toastify";
 export default function Admin() {
+  const [admins, setAdmins] = useState([]);
+  const [uId, setUId] = useState("");
+  useEffect(() => {
+    Services.getAllAdmins()
+      .then((res) => {
+        setAdmins(res.data);
+      })
+      .catch((err) => {
+       // alert(err.message);
+        toast.error(err.message,{autoclose:1000});
+      });
+  }, []);
+
+  const AdminHandler = () => {
+    Services.UpdateUserRole(uId)
+      .then((res) => {
+        toast.success("Admin Registered Successfully",{autoclose:1000});
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      })
+      .catch((err) => {
+        //alert(err.message);
+        toast.error(err.message,{autoclose:1000});
+      });
+  };
+
   return (
     <>
       <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-        <h3 class="font-weight-bold">Admins</h3>
+        <h3 class="fw-bold">Admins</h3>
       </div>
 
-      <div className="form-group m-4">
-        <label className="form-label">Enter id to Make User as a Admin</label>
-
-        <div className="input-group">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Enter the Patient ID"
-          />
-          <div className="input-group-append">
-            <button className="btn btn-sm btn-primary" type="button">
-              Make User As Admin
-            </button>
-          </div>
-        </div>
+      <div class="d-flex" role="search">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Enter the user id To make Admin"
+          onChange={(e) => setUId(e.target.value)}
+        />
+        <button
+          className="btn btn-sm btn-primary"
+          type="button"
+          onClick={AdminHandler}
+        >
+          Make User As Admin
+        </button>
       </div>
+
       <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-        <h4 class="font-weight-bold">All Admin</h4>
+        <h4 class="font-weight-bold">All Admins</h4>
       </div>
       <div className="col-lg-12 grid-margin stretch-card">
         <div className="card">
@@ -33,66 +61,28 @@ export default function Admin() {
               <table className="table table-hover">
                 <thead>
                   <tr>
-                    <th>PatientID</th>
+                    <th>Admin Id</th>
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Email</th>
                     <th>Phone</th>
                     <th>Address</th>
+                    <th>Role</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>123</td>
-                    <td>sanket</td>
-                    <td>allergies</td>
-                    <td>09-02-2024</td>
-                    <td>9921410715</td>
-                    <td>
-                      A/p Mandavagan Pharata tal. shirur Dist. Pune, 412211
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Messsy</td>
-                    <td>Flash</td>
-                    <td className="text-danger">
-                      21.06% <i className="ti-arrow-down" />
-                    </td>
-                    <td>
-                      <label className="badge badge-warning">In progress</label>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>John</td>
-                    <td>Premier</td>
-                    <td className="text-danger">
-                      {" "}
-                      35.00% <i className="ti-arrow-down" />
-                    </td>
-                    <td>
-                      <label className="badge badge-info">Fixed</label>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Peter</td>
-                    <td>After effects</td>
-                    <td className="text-success">
-                      82.00% <i className="ti-arrow-up" />
-                    </td>
-                    <td>
-                      <label className="badge badge-success">Completed</label>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Dave</td>
-                    <td>53275535</td>
-                    <td className="text-success">
-                      98.05% <i className="ti-arrow-up" />
-                    </td>
-                    <td>
-                      <label className="badge badge-warning">In progress</label>
-                    </td>
-                  </tr>
+                  {admins &&
+                    admins.map((admin) => (
+                      <tr>
+                        <td>{admin.userId}</td>
+                        <td>{admin.firstName}</td>
+                        <td>{admin.lastName}</td>
+                        <td>{admin.emailId}</td>
+                        <td>{admin.contactNo}</td>
+                        <td>{admin.address}</td>
+                        <td>{admin.role}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

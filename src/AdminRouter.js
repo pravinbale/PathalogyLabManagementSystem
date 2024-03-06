@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
-import App from "./Admin/App";
+import App from "./Admin/AdminApp.js";
 import Dashboard from "./Admin/Dashboard";
-import Appointments from "./Admin/Appointments";
+import Appointments from "./Admin/Appointments/Appointments.js";
 import TestBook from "./Admin/TestBook";
 import Patients from "./Admin/Users/Patients";
 import Doctors from "./Admin/Users/Doctors";
@@ -11,6 +11,8 @@ import AllTest from "./Admin/Tests/AllTest";
 import AddDoctor from "./Admin/Users/AddDoctor";
 import Feedback from "./Admin/Feedback";
 import Enquiry from "./Admin/Enquiry";
+import AppointmentDetails from "./Admin/Appointments/AppointmentDetails.js";
+
 
 const adminRouter = createBrowserRouter([
   {
@@ -24,6 +26,10 @@ const adminRouter = createBrowserRouter([
       {
         path: "appointments",
         element: <Appointments />,
+      },
+      {
+        path: "appointmentsDetails/:id",
+        element: <AppointmentDetails />,
       },
       {
         path: "testBookings",
@@ -49,6 +55,7 @@ const adminRouter = createBrowserRouter([
         path: "allTest",
         element: <AllTest />,
       },
+    
       {
         path: "addDoctor",
         element: <AddDoctor />,

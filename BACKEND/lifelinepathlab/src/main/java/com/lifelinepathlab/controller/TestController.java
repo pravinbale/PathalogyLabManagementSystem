@@ -21,8 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lifelinepathlab.exception.ResourceNotFoundException;
 import com.lifelinepathlab.model.ClientFeedback;
+import com.lifelinepathlab.model.Doctor;
 import com.lifelinepathlab.model.Test;
-import com.lifelinepathlab.sevice.TestService;
+import com.lifelinepathlab.service.TestService;
 import com.lifelinepathlab.validations.Validations;
 
 
@@ -53,7 +54,7 @@ public class TestController {
         testService.createTest(testName, testType, testDescription, actualPrice, discount, finalPrice, photoFile);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/all/")
     public List<Test> getAllTests() {
         return testService.getAllTests();
     }
@@ -64,6 +65,11 @@ public class TestController {
                 .orElseThrow(() -> new ResourceNotFoundException("Test not found with id: " , id));
     }
 
+    @GetMapping("/testName/{name}")
+    public Test getTestByName(@PathVariable String name) {
+        return testService.getByName(name);
+    }
+    
     @PutMapping("/{id}")
     public void updateTest(@PathVariable int id,
                            @RequestParam String testName,
@@ -71,15 +77,32 @@ public class TestController {
                            @RequestParam String testDescription,
                            @RequestParam int actualPrice,
                            @RequestParam int discount,
-                           @RequestParam int finalPrice,
-                           @RequestParam(required = false) MultipartFile photoFile) throws IOException {
-        testService.updateTest(id, testName, testType, testDescription, actualPrice, discount, finalPrice, photoFile);
+                           @RequestParam int finalPrice)
+                           throws IOException {
+        testService.updateTest(id, testName, testType, testDescription, actualPrice, discount, finalPrice);
     }
 
     @DeleteMapping("/{id}")
     public void deleteTest(@PathVariable int id) {
         testService.deleteTest(id);
     }
+    
+    @GetMapping("/all/{type}")
+    public List<Test> getByTestType(@PathVariable("type") String type){
+    	return testService.getByTypeName(type);
+    }
+    
+    @GetMapping("/TestType")
+    public List<String> getTestTypes(){
+    	return testService.getDistinctTestTypes();
+    }
+    
+    @GetMapping("/bestOffers")
+    public ResponseEntity<List<Test>> getBestOffers(){
+    	List <Test> bestOffers=  testService.getBestOffers();
+    	return ResponseEntity.ok(bestOffers);
+    }
+     
 
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)
 //    @ExceptionHandler({ FileStorageException.class, Exception.class })

@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,14 +14,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.lifelinepathlab.model.Doctor;
-import com.lifelinepathlab.sevice.DoctorService;
+import com.lifelinepathlab.service.DoctorService;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/doctors")
+@RequestMapping("/api/doctors")
 public class DoctorController {
 
     @Autowired
@@ -47,6 +49,7 @@ public class DoctorController {
     }
 
     @GetMapping("/list")
+   // @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<Doctor>> getAllDoctors() {
         List<Doctor> doctors = doctorService.getAllDoctors();
         return ResponseEntity.ok(doctors);
@@ -57,6 +60,31 @@ public class DoctorController {
         Doctor doctor = doctorService.getDoctorById(id);
         return ResponseEntity.ok(doctor);
     }
+    
+    @GetMapping("/pending")
+    public ResponseEntity<List<Doctor>> getAllPendingRequest() {
+        List<Doctor> pendingDoctors = doctorService.getAllPendingRequest();
+        return ResponseEntity.ok(pendingDoctors);
+    }
+    
+    @GetMapping("/approved")
+    public ResponseEntity<List<Doctor>> getAllDistinctDoctors() {
+    	List<Doctor> approvedDoctors = doctorService.getAllDistinctDoctors();
+        return ResponseEntity.ok(approvedDoctors);
+    }
+    
+    @PutMapping("/request/{id}")
+    public ResponseEntity<String> updateRequestStatus(@PathVariable int id) {
+        doctorService.updateRequestStatus(id);
+        return ResponseEntity.ok("Request Status Updated successfully...!!!");
+    }
+    
+    @PutMapping("/reject/{id}")
+    public ResponseEntity<String> rejectDoctorRequest(@PathVariable int id) {
+        doctorService.rejectDoctorRequest(id);
+        return ResponseEntity.ok("Doctor request rejected...!!!");
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateDoctor(

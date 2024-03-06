@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import Services from "../Services/Services";
+import { toast } from "react-toastify";
 export default function Feedback() {
   const [clientName1, setClientName1] = useState("");
   const [contactNo1, setContactNo1] = useState("");
@@ -15,18 +16,23 @@ export default function Feedback() {
 
     Services.addClientFeedback(clientFeedback)
       .then((res) => {
-        alert(res.data);
+        //alert(res.data);
+        toast.success(res.data,{onclose:1000});
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000);
       })
       .catch((err) => {
-        alert(err.message);
-      });
+        //alert(err.message);
+        toast.error(err.message,{onclose:1000});
+       } )
   };
 
   return (
     <div class="container rounded feedback-post-container">
       <div class="row">
         <div className="col-sm-6">
-          <h1>Leave Your Fedback Here</h1>
+          <h1>Leave Your Feedback Here</h1>
           <br />
           <div className="input-icons ">
             <i className="mdi mdi-account" />
@@ -48,6 +54,7 @@ export default function Feedback() {
             />
           </div>
           <br />
+          <p>Thanks for your feedback. We're constantly trying to improve our services, so your input is valuable.</p>
         </div>
         <div className="col-sm-6 vl">
           <label>Write your feedback:</label>

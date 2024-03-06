@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Services from "../../Services/Services";
+import { toast } from "react-toastify";
 export default function AddTest() {
   const [previewSrc, setPreviewSrc] = useState("");
   const previewImage = (input) => {
@@ -22,7 +22,6 @@ export default function AddTest() {
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    // Add hover effect if needed
   };
 
   const handleDrop = (e) => {
@@ -44,9 +43,63 @@ export default function AddTest() {
     photoFile: null,
   });
 
+  // const calculateFinalPrice = () => {
+  //   const actualPrice = Number(formData.actualPrice);
+  //   const discount = Number(formData.discount);
+
+  //   // Check if both actualPrice and discount are valid numbers
+  //   if (!isNaN(actualPrice) && !isNaN(discount)) {
+  //     // Calculate final price with 2 decimal places
+  //     const discountedAmount = (actualPrice * discount) / 100;
+  //     const finalPrice = actualPrice - discountedAmount;
+
+  //     // Update the state
+  //     setFormData((prevData) => ({ ...prevData, finalPrice }));
+  //   } else {
+  //     // Handle invalid input (non-numeric values)
+  //     setFormData((prevData) => ({ ...prevData, finalPrice: "" }));
+  //   }
+  // };
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({ ...formData, [name]: value });
+
+  //   // If the changed field is actualPrice or discount, recalculate finalPrice
+  //   if (name == "actualPrice" || name == "discount") {
+  //     calculateFinalPrice();
+  //   }
+  // };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+    // If the changed field is actualPrice or discount, recalculate finalPrice
+    if (name === "actualPrice" || name === "discount") {
+      calculateFinalPrice();
+    }
+  };
+
+  const calculateFinalPrice = () => {
+    setFormData((prevData) => {
+      const actualPrice = Number(prevData.actualPrice);
+      const discount = Number(prevData.discount);
+
+      // Check if both actualPrice and discount are valid numbers
+      if (!isNaN(actualPrice) && !isNaN(discount)) {
+        // Calculate final price with 2 decimal places
+        const discountedAmount = (actualPrice * discount) / 100;
+        const finalPrice = actualPrice - discountedAmount;
+
+        // Return the updated state
+        return { ...prevData, finalPrice };
+      } else {
+        // Handle invalid input (non-numeric values)
+        return { ...prevData, finalPrice: 0 };
+      }
+    });
   };
 
   const handleFileChange = (e) => {
@@ -76,21 +129,16 @@ export default function AddTest() {
 
       await Services.addTest(formDataToSend)
         .then((res) => {
-          alert("Test registered successfully!");
+          //alert("Test registered successfully!");
+          toast.success("Test Registered Successfully!", { autoClose: 1000 });
         })
         .catch((err) => {
-          console.log(err);
+          //console.log(err);
+          toast.error("Failed to register test. Please try again later!", {
+            autoClose: 1000,
+          });
         });
 
-      // await axios.post(
-      //   "http://localhost:8083/api/tests/create",
-      //   formDataToSend,
-      //   {
-      //     headers: { "Content-Type": "multipart/form-data" },
-      //   }
-      // );
-
-      // Clear form fields after successful registration
       setFormData({
         testName: "",
         testType: "",
@@ -102,15 +150,19 @@ export default function AddTest() {
       });
     } catch (error) {
       console.error("Error registering test:", error);
-      alert("Failed to register test. Please try again later.");
+      //alert("Failed to register test. Please try again later.");
+      toast.error("Failed to register test. Please try again later!", {
+        autoClose: 2000,
+      });
     }
   };
   return (
-    <>
+    <div>
       <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-        <h3 class="font-weight-bold">Add Test</h3>
+        <h3 class="font-weight-bold mt-3">Add Test</h3>
       </div>
-      <div className="container mt-5">
+
+      <div className="container mt-5 mb-3 pb-3 bg-white pt-3">
         <div className="text-center">
           <h2 className="mb-4">Upload Photo</h2>
           <label
@@ -180,8 +232,8 @@ export default function AddTest() {
                 className="typeahead"
                 type="text"
                 name="actualPrice"
-                value={formData.actualPrice}
                 onChange={handleChange}
+                value={formData.actualPrice}
                 placeholder="Enter Actual price"
               />
             </div>
@@ -193,8 +245,8 @@ export default function AddTest() {
                 className="typeahead"
                 type="text"
                 name="discount"
-                value={formData.discount}
                 onChange={handleChange}
+                value={formData.discount}
                 placeholder="Enter Discount in %"
               />
             </div>
@@ -207,8 +259,8 @@ export default function AddTest() {
                 type="text"
                 name="finalPrice"
                 value={formData.finalPrice}
-                onChange={handleChange}
                 placeholder="Final price"
+                readOnly
               />
             </div>
           </div>
@@ -217,6 +269,6 @@ export default function AddTest() {
           Add Test
         </button>
       </div>
-    </>
+    </div>
   );
 }

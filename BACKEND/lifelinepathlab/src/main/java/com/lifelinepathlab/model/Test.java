@@ -1,9 +1,13 @@
 package com.lifelinepathlab.model;
 
+import java.util.Objects;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,12 +23,11 @@ public class Test {
 	private int actualPrice;
 	private int discount;
 	private int finalPrice;
-	private String testImagePath="D:\\LifelinePhathLab\\public\\images\\logo.svg";
+	private String testImagePath;
+
 
 	public Test() {
-		// TODO Auto-generated constructor stub
 	}
-
 	public Test(int testId, String testName, String testType, String testDescription, int actualPrice, int discount,
 			int finalPrice, String testImagePath) {
 		super();
@@ -37,6 +40,7 @@ public class Test {
 		this.finalPrice = finalPrice;
 		this.testImagePath = testImagePath;
 	}
+	
 
 	public int getTestId() {
 		return testId;
@@ -107,6 +111,19 @@ public class Test {
 		return "Test [testId=" + testId + ", testName=" + testName + ", testType=" + testType + ", testDescription="
 				+ testDescription + ", actualPrice=" + actualPrice + ", discount=" + discount + ", finalPrice="
 				+ finalPrice + ", testImagePath=" + testImagePath + "]";
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+	    if (this == o) return true;
+	    if (o == null || getClass() != o.getClass()) return false;
+	    Test test = (Test) o;
+	    return Objects.equals(testId, test.testId);
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(testId);
 	}
 
 }

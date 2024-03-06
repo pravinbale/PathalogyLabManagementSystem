@@ -6,10 +6,10 @@ import UploadPrescription from "./component/UploadPrescription";
 import DownloadReport from "./component/DownloadReport";
 import Contact from "./component/Contact";
 import Cart from "./component/Cart";
-import Login from "./component/Login";
-import Signup from "./component/Signup";
-import DisplayReports from "./component/DisplayReports";
+import Login from "./LandingPage/Login";
+import Signup from "./LandingPage/Signup";
 import DoctorRegistration from "./component/DoctorRegistration";
+import TestDetails from "./component/TestDetails";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: <Cart />,
+      },
+      {
+        path: "/test-details/:testId",
+        element: <TestDetails />,
       },
     ],
   },
